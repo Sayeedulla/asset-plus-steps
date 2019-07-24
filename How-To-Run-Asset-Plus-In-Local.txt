@@ -1,0 +1,22 @@
+# clone asset-plus web ui
+git clone git@gitlab.southindia.cloudapp.azure.com:M1046908/asset-plus-aws-web.git
+
+#clone asset-plus-aws-services
+git clone git@gitlab.southindia.cloudapp.azure.com:iotcoe/asset-plus-aws-services.git
+
+#clone asset-plus-nginx
+
+
+#clone asset-plus-tools
+
+#set environment variable CODEBASE path as  till /asset-plus-services
+
+#place the asset-plus-nginx folder in the same space where asset-plus-services is
+
+#open the folder asset-plus-nginx and open command prompt and execute  start nginx
+
+#Open asset-plus-aws-services and run 4 processes of asset-plus-gw-stack , asset-plus-services,asset-plus-authZserver as Spring boot :run
+
+#After all the services are up open asset-plus-web and do npm i and npm i -g  bower gulp
+
+#After the build is successfull do gulp serve --env nginx

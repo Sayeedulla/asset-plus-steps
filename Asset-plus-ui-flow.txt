@@ -1,0 +1,474 @@
+# Add Sensors
+#Add Asset Types
+# Add Gateway Type
+#Add gateway Tag
+#Add Asset Tag
+#Add Location 
+#Add Gateway 
+#Add Asset
+
+#create a folder under D drive(D:/temp)
+
+# Add these two properties in asset-plus-gw-process.properties file
+asset.plus.gateway.use.filepath.cert=true
+asset.plus.gateway.certificates.base.path=D:/temp
+
+#Add these two properties in asset-plus-device-management.properties file
+asset.plus.gateway.use.filepath.cert
+asset.plus.gateway.certificates.base.path=D:/temp
+
+#Add these two properties in asset-plus-gw-edge-rules-engine.properties file
+asset.plus.gateway.use.filepath.cert
+asset.plus.gateway.certificates.base.path=D:/temp
+
+#Download gateway certicate and key file and paste in that D:/temp folder 
+#make sure certificate file extension is .cer and key file is .key
+
+#To Enable Timeseries download influx db and telegraf and place it  in time_series folder in D drive
+update these properties in asset-plus-services.properties
+time.series.local.mode.enable=true
+time.series.local.influxDB.path=D:\\time_series_data\\influxdb-1.7.7-1
+time.series.local.telegraf.path=D:\\time_series_data\\telegraf
+
+#Run Thing Simulator Server
+Make Skylark Embedded Active
+Create Thing Type
+Create Thing with same params.
+Create Simulation in manual and start to receive registartion request.
+
+#Make Sure that u are serving in https://localhost
+
+#To Construct Rules
+Click on Buisness Rules
+Create a new rule with some name  and edit the sample rule provided
+remove preprocess
+Edit rule condition and give somerule name and ruleset name and in actions and in send command for that u need to add Node Command .
+And Alert Code addition for sendAlert
+
+
+
+# CurrentRuleConfigStatusEventHandler file in com.mindtree.assetplus.services.handlers.impl
+replace line no 30 with this EdgeRuleConfigPayload ruleConfigEventPayload = new Gson().fromJson(payload, EdgeRuleConfigPayload.class);
+and remove line 29
+
+
+#update data-derby with this
+--
+INSERT INTO ap_tool_tip (tool_tip_key, tool_tip_text) VALUES
+  ('asset_key', 'An asset is a physical object like a compressor, golf cart, water cooler etc.');
+--
+INSERT INTO ap_device (device_id, enabled) VALUES
+  ('device', TRUE),
+  ('0e78175e-8610-4ff6-a027-45f083f69f03', TRUE);
+
+--
+-- Insert data into assetplus_role table.
+--
+INSERT INTO ap_role (role_name, description) VALUES
+  ('ROLE_DEVICE', 'devices which is accessing asset plus');
+
+
+INSERT INTO ap_device_role (device_id, role_id) VALUES
+  (1, 1);
+--
+-- Insert data into ap_asset_attribute_master table.
+--
+
+INSERT INTO ap_asset_attribute_master (
+  org_id,
+  attribute_key,
+  attribute_description) VALUES
+  ('00000000-0000-0000-0000-000000000001','manufacturer', 'manufacturer of the asset'),
+  ('00000000-0000-0000-0000-000000000001','model no', 'Model number of the asset');
+
+--
+-- Insert data into ap_asset_dynamic_attribute_master table.
+--
+
+INSERT INTO ap_asset_dynamic_attribute_master (
+  org_id,
+  dynamic_attribute_key,
+  dynamic_attribute_description) VALUES
+  ('00000000-0000-0000-0000-000000000001','temperature', 'temperature of asset'),
+  ('00000000-0000-0000-0000-000000000001','vibration', 'vibration level of asset');
+
+--
+-- Insert data into ap_asset_type_master table.
+--
+INSERT INTO ap_asset_type_master (
+  org_id,
+  asset_type,
+  asset_type_description, asset_class, heartbeat_interval, device_mgmt_heartbeat_interval) VALUES
+  ('00000000-0000-0000-0000-000000000001','BULK_CONTAINER', 'Bulk Container', 'FIXED', 5, 10);
+
+--
+-- Insert data into ap_asset_type_master_attributes table.
+--
+INSERT INTO ap_asset_type_master_attributes (asset_type_id, asset_attribute_id) VALUES
+  (1, 1), (1, 2);
+
+--
+-- Insert data into ap_asset_type_master_dynamic_attributes table.
+--
+INSERT INTO ap_asset_type_master_dynamic_attributes (org_id, asset_type_id, asset_dynamic_attribute_id, lower_limit, upper_limit, sensor_type, sensor_state)
+VALUES
+    ('00000000-0000-0000-0000-000000000001',1, 1, '0', '100', 'RANGE', 'ACTIVE'),
+    ('00000000-0000-0000-0000-000000000001',1, 2, '0', '1200', 'RANGE', 'ACTIVE');
+
+-- ----------------------------------------
+-- programmatically randomly generated tags using java UUID
+-- ----------------------------------------
+INSERT INTO  ap_tag(org_id, tag_id, device_bind_status, auto_bind_allowed, creation_time) VALUES
+  ('00000000-0000-0000-0000-000000000001','5843acd1-964a-4396-a7aa-647462ccbb8a', FALSE, FALSE, '2016-07-19 03:54:46');
+
+
+-- ----------------------------------------
+-- programmatically randomly generated gateways using java UUID
+-- ----------------------------------------
+INSERT INTO ap_gateway (org_id, gateway_id, creation_time) VALUES
+  ('00000000-0000-0000-0000-000000000001','c9404384-3df5-426a-9320-2782db24aa14', '2016-07-29 03:42:43');
+
+-- ----------------------------------------
+-- programmatically randomly generated gateways using java UUID
+-- ----------------------------------------
+INSERT INTO ap_gateway_type (org_id, name, description, heartbeat_interval, device_mgmt_heartbeat_interval, edge_rules_enabled)
+VALUES
+  ('00000000-0000-0000-0000-000000000001','BULK_CONTAINER_GATEWAY', 'It is a tiny and affordable computer that you can use to build IoT solutions', 5, 10, TRUE);
+
+--
+-- Insert random data into ap_tag_specific_attributes table.
+--
+INSERT INTO ap_tag_specific_attributes (org_id, asset_type_id, tag_id, tag_type, mac_address, internet_capable) VALUES
+  ('00000000-0000-0000-0000-000000000001', 1, 1, 'BLE', '5843acd1-964a-4396-a7aa-647462ccbb8a', FALSE);
+
+--
+-- Insert data into ap_gateway_type_association table.
+--
+INSERT INTO ap_gateway_type_association (org_id, gateway_id, gateway_type_id) VALUES
+  ('00000000-0000-0000-0000-000000000001', 1, 1);
+
+--
+-- Insert data into ap_gateway_attributes table.
+--
+INSERT INTO ap_gateway_attributes (org_id, gateway_id, serial_no, gateway_name, manufacturer, model, location, gateway_type, heartbeat_interval, latitude, longitude, device_mgmt_heartbeat_interval)
+VALUES
+  ('00000000-0000-0000-0000-000000000001', 1, 'Serial1234', 'BULK_CONTAINER_GATEWAY', 'Farnell', 'Model1234', 'MT', 1, 10, '0', '0', 10);
+
+--
+-- Insert data into ap_asset table.
+--
+INSERT INTO ap_asset (org_id, asset_id, asset_state, asset_health_state, asset_type_id, tag_id, creation_time, location, heartbeat_interval, latitude, longitude, device_mgmt_heartbeat_interval)
+VALUES
+  ('00000000-0000-0000-0000-000000000001', '61867f15-1bff-4cc2-95e7-01a903c112fd', 'INACTIVE', 'UNKNOWN', 1, 1, '2016-08-26 10:42:43', 'MT', 10, '0', '0', 10);
+
+--
+-- Insert data into ap_asset_attribute_value table.
+--
+INSERT INTO ap_asset_attribute_value (org_id, attribute_value, asset_attribute_id, asset_value_id) VALUES
+  ('00000000-0000-0000-0000-000000000001', 'Farnell', 1, 1),
+  ('00000000-0000-0000-0000-000000000001', 'Model001', 2, 1);
+
+--
+-- Insert data into ap_asset_gateway table.
+--
+INSERT INTO ap_asset_gateway (org_id, gateway_id, asset_id) VALUES
+  ('00000000-0000-0000-0000-000000000001', 'c9404384-3df5-426a-9320-2782db24aa14', '61867f15-1bff-4cc2-95e7-01a903c112fd');
+--
+-- Firmware data
+--
+INSERT INTO ap_firmware (component_logical_name, latest_version, component_description, device_restart_required,retry_firmware_download) VALUES
+  ('asset-plus-gw-process', '1.0.0', 'Asset+ Gateway process router.', TRUE,TRUE),
+  ('asset-plus-gw-mqtt-adapter', '1.0.0', 'Asset+ Gateway MQTT Adapter', TRUE,TRUE),
+  ('asset-plus-gw-edge-rules-engine', '1.0.0', 'Asset+ Edge Analytics Engine.', TRUE,TRUE),
+  ('asset-plus-gw-device-mgmt-process', '1.0.0', 'Asset+ Device Management Agent.', TRUE,TRUE);
+--
+INSERT INTO ap_firmware_revision (firmware_version, firmware_file_name, version_release_note, firmware_file_size, checksum_sha1, release_date,retry_firmware_download)
+VALUES
+  ('1.0.0', 'asset-plus-gw-process-1.0.0.jar', 'Initial stable release.', 45000000,'bf35fa420d3e0f669e27b337062bf19f510480d4', '2016-07-19 03:54:46',TRUE),
+  ('0.0.9', 'asset-plus-gw-process-0.0.9.jar', 'Beta release 2.', 45000000, 'bf35fa420d3e0f669e27b337062bf19f510480d4', '2016-06-19 03:54:46',TRUE),
+  ('0.0.8', 'asset-plus-gw-process-0.0.8.jar', 'Beta release 1.', 45000000, 'bf35fa420d3e0f669e27b337062bf19f510480d4', '2016-06-19 03:54:46',TRUE),
+  ('1.0.0', 'asset-plus-gw-mqtt-adapter-1.0.0.jar', 'Initial stable release.', 55000000, 'bf35fa420d3e0f669e27b337062bf19f510480d4', '2016-07-19 03:54:46',TRUE),
+  ('0.0.9', 'asset-plus-gw-mqtt-adapter-0.0.9.jar', 'Beta release 2.', 55000000, 'bf35fa420d3e0f669e27b337062bf19f510480d4', '2016-06-19 03:54:46',TRUE),
+  ('0.0.8', 'asset-plus-gw-mqtt-adapter-0.0.8.jar', 'Beta release 1.', 55000000, 'bf35fa420d3e0f669e27b337062bf19f510480d4', '2016-06-19 03:54:46',TRUE),
+  ('1.0.0', 'asset-plus-gw-edge-rules-engine-1.0.0.jar', 'Initial stable release.', 55000000, 'bf35fa420d3e0f669e27b337062bf19f510480d4', '2016-07-19 03:54:46',TRUE),
+  ('0.0.9', 'asset-plus-gw-edge-rules-engine-0.0.9.jar', 'Beta release 2.', 55000000, 'bf35fa420d3e0f669e27b337062bf19f510480d4', '2016-06-19 03:54:46',TRUE),
+  ('0.0.8', 'asset-plus-gw-edge-rules-engine-0.0.8.jar', 'Beta release 1.', 55000000, 'bf35fa420d3e0f669e27b337062bf19f510480d4', '2016-06-19 03:54:46',TRUE),
+  ('1.0.0', 'asset-plus-gw-device-mgmt-process-1.0.0.jar', 'Initial stable release.', 55000000, 'bf35fa420d3e0f669e27b337062bf19f510480d4', '2016-07-19 03:54:46',TRUE),
+  ('0.0.9', 'asset-plus-gw-device-mgmt-process-0.0.9.jar', 'Beta release 2.', 55000000, 'bf35fa420d3e0f669e27b337062bf19f510480d4', '2016-06-19 03:54:46',TRUE),
+  ('0.0.8', 'asset-plus-gw-device-mgmt-process-0.0.8.jar', 'Beta release 1.', 55000000, 'bf35fa420d3e0f669e27b337062bf19f510480d4', '2016-06-19 03:54:46',TRUE);
+--
+INSERT INTO ap_firmware_ap_firmware_revision (component_id, firmware_revision_id) VALUES
+  (1, 1),
+  (1, 2),
+  (1, 3),
+  (2, 4),
+  (2, 5),
+  (2, 6),
+  (3, 7),
+  (3, 8),
+  (3, 9),
+  (4, 10),
+  (4, 11),
+  (4, 12);
+--
+INSERT INTO ap_gateway_type_firmware_association (gateway_type_id, firmware_component_id) VALUES
+  (1, 1),
+  (1, 2),
+  (1, 3),
+  (1, 4);
+--
+INSERT INTO ap_device_health (internal_ip_address, external_ip_address, device_id, device_type, location, device_class, heartbeat_value, last_recorded_time, reported_state)
+VALUES
+  ('0.0.0.0', '0.0.0.0', 'c9404384-3df5-426a-9320-2782db24aa14', 'BULK_CONTAINER_GATEWAY', 'MT', 'GATEWAY', 'abcd', '2016-07-19 03:54:46', 'NORMAL_OPS');
+--
+INSERT INTO ap_device_firmware_health (device_id, device_type, device_class, firmware_name, current_firmware_version, current_status, firmware_uptime, firmware_startup_time, last_recorded_time)
+VALUES
+  ('c9404384-3df5-426a-9320-2782db24aa14', 'BULK_CONTAINER_GATEWAY', 'GATEWAY', 'asset-plus-gw-process', 'UNKNOWN', 'UNKNOWN',
+   'UNKNOWN', 'UNKNOWN', '2016-07-19 03:54:46'),
+  ('c9404384-3df5-426a-9320-2782db24aa14', 'BULK_CONTAINER_GATEWAY', 'GATEWAY', 'asset-plus-gw-mqtt-adapter', 'UNKNOWN', 'UNKNOWN',
+   'UNKNOWN', 'UNKNOWN', '2016-07-19 03:54:46'),
+  ('c9404384-3df5-426a-9320-2782db24aa14', 'BULK_CONTAINER_GATEWAY', 'GATEWAY', 'asset-plus-gw-edge-rules-engine', 'UNKNOWN',
+   'UNKNOWN', 'UNKNOWN', 'UNKNOWN', '2016-07-19 03:54:46'),
+  ('c9404384-3df5-426a-9320-2782db24aa14', 'BULK_CONTAINER_GATEWAY', 'GATEWAY', 'asset-plus-gw-device-mgmt-process', 'UNKNOWN',
+   'UNKNOWN', 'UNKNOWN', 'UNKNOWN', '2016-07-19 03:54:46');
+--
+--
+INSERT INTO ap_alert_code (org_id, alert_code, alert_message, alert_severity) VALUES
+  ('00000000-0000-0000-0000-000000000001', 'AAP0001', 'A temperature Upper threshold breach was noted.', 1),
+  ('00000000-0000-0000-0000-000000000001', 'AAP0002', 'A temperature Lower threshold breach was noted.', 1),
+  ('00000000-0000-0000-0000-000000000001', 'AAP0003', 'Speed Torque Characteristics Violated', 1),
+  ('00000000-0000-0000-0000-000000000001', 'GAP0001', 'Gateway is running low on memory.', 1),
+  ('00000000-0000-0000-0000-000000000001', 'GAP0002', 'High CPU load was noted.', 1);
+--
+INSERT INTO xtext_resource (resource_id, creation_time, content) VALUES
+  ('template-resource-v1.rule', '2099-12-31 23:59:59',
+'/**
+ * This is a sample rule document to get you started. Modify it according to your needs.
+ * You can hover over any part of this document to get additional information on the
+ * constructs of a rule document. You can also do a CTRL+SPACE for intellisense.
+ *
+ * @author Mindtree
+ * @version 1.0
+ * @date 03/22/2017
+ */
+rule some_rule_name /* The rule name*/ {
+   /**
+	  * Pre-process options can enhance data points before rules are applied.
+	  */
+	  preProcess {
+	      function removeJitter {
+	        params("temperature") // removes jitter from the temperature variable
+	      }
+	  }
+	 /**
+	  * Specify the condition under which this rule will succeed
+	  */
+	  evaluations {
+		    "temperature > 45 and vibration > 1000" // you can specify any condition that returns a boolean result
+	  }
+	 /**
+	  * You can also specify additional post-processing activity.
+	  */
+	  postProcess {
+		    function addAttribute {
+            params("message" , "Temperature is below operational levels")
+        }
+	  }
+}
+/**
+ * A ruleSet is a logical collection of multiple rules. This is the entry point into
+ * rule execution.
+ */
+ruleSet compressor_temperature_low {
+	 /**
+	  * Specify the data source stream to which this ruleSet should apply. Source streams are
+	  * pre-configured in the system.
+	  */
+	  use sensor_data_stream // the stream name
+	  message("COMPRESSOR low temperature established.")
+	 /**
+	  * Provide qualifiers that will be applied to select specific tuples. These are optional.
+	  */
+	  applicationSet {
+		    type :  "COMPRESSOR" // We are selecting data points that arrive from assets of type COMPRESSOR
+	  }
+	 /**
+	  * Specify the list of rules you have defined earlier in this document.
+	  */
+	  rules {
+		    some_rule_name
+	  }
+	 /**
+	  * Specify the list of actions that should be triggered.
+	  */
+	  actions {
+		   /**
+		    * You can specify optional trigger policies.
+		    */
+		    trigger {
+			      once // trigger actions only for the first time the rule fires, reset when conditions are normal again.
+		    }
+		    sendEmail("p1Admin") // Send an email
+		    sendCommand("hvacFanOff") // send this command to the asset node
+	  }
+}
+');
+
+INSERT INTO xtext_resource (resource_id, creation_time, content) VALUES
+  ('bulk_container_temp_control_resource.rule', '2016-12-31 23:59:59',
+'rule temperature_ucl_met {
+	evaluations {
+		"(temperature > 70)"
+	}
+}
+rule temperature_lcl_met {
+	evaluations {
+		"(temperature < 20)"
+	}
+}
+ruleSet bulk_container_temp_ucl_breach {
+	use sensor_data_stream
+	message("HVAC temperature UCL breach")
+	applicationSet {
+		type :  "BULK_CONTAINER"
+	}
+	rules {
+		temperature_ucl_met
+	}
+	actions {
+		sendCommand("hvacFanOn")
+		sendAlert("AAP0002")
+	}
+}
+ruleSet bulk_container_temp_lcl_obtained {
+	use sensor_data_stream
+	message("HVAC temperature has hit LCL")
+	applicationSet {
+		type :  "BULK_CONTAINER"
+	}
+	rules {
+		temperature_lcl_met
+	}
+	actions {
+		sendCommand("hvacFanOff")
+		sendAlert("AAP0001")
+	}
+}
+');
+--
+INSERT INTO ap_rule_document(org_id,
+rule_document_id,
+rule_title,
+rule_description,
+action_enabled,
+target_deployment,
+ resource_id)
+   VALUES ('00000000-0000-0000-0000-000000000001', 'f328b888-d1b1-11e6-bf26-cec0c932ce02', 'HVAC_TEMP_CONTROL',
+                'Sample rule document to get you started', TRUE, 'EDGE', 'bulk_container_temp_control_resource.rule');
+--
+--
+
+INSERT INTO ap_datasource_type (id, type, metadata_template) VALUES
+(1, 'MQTT',
+'{"partitionKeys":"","identityKey":""}'),
+(2, 'WEB_API',
+'{"endpoint":"","className":"","reloadInterval":""}');
+
+INSERT INTO ap_timeseries_master(preset_name,downsampling_interval, source_measurement_name,
+target_measurement_name,source_retention_policy_name,target_retention_policy_name,retention_policy_duration) VALUES
+('thirty_seconds','30s', 'sensor_data', 'thirty_seconds_sensor_data','autogen', 'ONE_HOUR','1h'),
+('five_minutes','5m', 'thirty_seconds_sensor_data', 'five_minutes_sensor_data','ONE_HOUR', 'ONE_HOUR','1h'),
+('ten_minutes','10m', 'five_minutes_sensor_data', 'ten_minutes_sensor_data','ONE_HOUR', 'ONE_HOUR','1h'),
+('one_hour','1h', 'ten_minutes_sensor_data', 'one_hour_sensor_data','ONE_HOUR', 'TWENTY_FIVE_HOURS','25h'),
+('one_day','1d', 'one_hour_sensor_data', 'one_day_sensor_data','TWENTY_FIVE_HOURS', 'EIGHT_DAYS','8d'),
+('one_week','7d', 'one_day_sensor_data', 'one_week_sensor_data','EIGHT_DAYS', 'FIVE_WEEKS','35d'),
+('one_month','30d', 'one_week_sensor_data', 'one_month_sensor_data','FIVE_WEEKS', 'THIRTEEN_MONTHS','396d'),
+('one_year','365d', 'one_month_sensor_data', 'one_year_sensor_data','THIRTEEN_MONTHS', 'FIVE_YEAR','1825d');
+
+INSERT INTO ap_timeseries_preset(preset_name,preset_value, data_fetch_limit,time_series_master_id) VALUES
+('Five_Minutes', '5m', 12,1),
+('Ten_Minutes','10m', 12,1),
+('One_Hour', '1h', 12,2),
+('One_Week', '7d', 7,4);
+
+INSERT INTO ap_assettype_timeseries_status (asset_type_id, asset_type, time_series_enabled) VALUES
+(1,'BULK_CONTAINER', false );
+
+INSERT INTO ap_timeseries_aggregation_function_master (aggregate_function_name, aggregate_function_value) VALUES
+('Average', 'mean' ),
+('Minimum', 'min' ),
+('Maximum', 'max');
+
+INSERT INTO ap_assettype_dynamic_attrib_timeseries_status (assettype_id, dynamic_attrib_id, time_series_enabled) VALUES
+(1, 1, false ),
+(1, 2, false );
+
+INSERT INTO ap_data_point_enhancer (asset_type_id, asset_type, time_series_preset_name, dynamic_attribute_name, aggregate_function_name, ts_agg_value_display_name) VALUES
+(1, 'BULK_CONTAINER', 'five_minutes', 'temperature', 'Average', 'five_minutes_avg_temperature'),
+(1, 'BULK_CONTAINER', 'five_minutes', 'temperature', 'Maximum', 'five_minutes_max_temperature'),
+(1, 'BULK_CONTAINER', 'one_day', 'temperature', 'Average', 'one_day_avg_temperature'),
+(1, 'BULK_CONTAINER', 'one_day', 'temperature', 'Maximum', 'one_day_max_temperature'),
+(1, 'BULK_CONTAINER', 'one_month', 'temperature', 'Average', 'one_month_avg_temperature'),
+(1, 'BULK_CONTAINER', 'one_month', 'temperature', 'Maximum', 'one_month_max_temperature');
+
+INSERT INTO ap_node_command ( command_id, command_name, command_desc, command_body, org_id) VALUES
+('d51d58c2-7dc6-4151-b680-01b95a007e60','hvacFanOn','hvacFanOn','APS+FAN=ON','00000000-0000-0000-0000-000000000001'),
+('d51d58c2-7dc6-4151-b680-01b95b007e60','hvacFanOff','hvacFanOff','APS+FAN=OFF','00000000-0000-0000-0000-000000000001');
+
+
+#update generate-asset-plus-locations.groovy in asset-plus-services src/main/resources with this
+import org.janusgraph.core.Cardinality
+import org.janusgraph.core.Multiplicity
+
+// an init script that returns a Map allows explicit setting of global bindings.
+def globals = [:]
+
+// Generates the modern graph into an empty graph via LifeCycleHook.
+// Note that the name of the key in the "global" map is unimportant.
+globals << [hook: [
+        onStartUp: { ctx ->
+            ctx.logger.info("Loading 'asset-plus-locations' graph data")
+            try {
+                if (!graph.vertices().hasNext()) {
+                    // define the schema/indexes if necessary
+                    def mgmt = graph.openManagement()
+                    if (!mgmt.getVertexLabels().iterator().hasNext()) {
+                        def location = mgmt.makeVertexLabel("location").make()
+                        def displayName = mgmt.makePropertyKey("displayName").dataType(String.class).cardinality(Cardinality.SINGLE).make()
+                        def hasChild = mgmt.makeEdgeLabel("hasChild").multiplicity(Multiplicity.MULTI).make()
+                        def locationByName = mgmt.buildIndex("locationByName", Vertex.class).addKey(displayName).indexOnly(location).buildCompositeIndex()
+                    }
+                    mgmt.commit()
+
+                    // create the data if necessary
+                    if (!graph.vertices().hasNext()) {
+                        def acme = graph.addVertex(T.label, "org", "orgId", "00000000-0000-0000-0000-000000000001", "name", "ACME", "desc", "ACME Organization")
+
+						def mindtree = graph.addVertex(T.label, "org", "orgId", "00000000-0000-0000-0000-000000000000", "name", "Mindtree", "desc", "Mindtree Organization")
+						 
+                        def MT = graph.addVertex(T.label, "location", "shortName", "MT", "displayName", "MT", "description", "Mindtree World","latitude","0","longitude","0")
+                        acme.addEdge("hasLocation", MT, 'description', 'MT vertex hasLocation relation with Mindtree-Org')
+
+                        def gw1 = graph.addVertex(T.label, "gateway", "thingId", "c9404384-3df5-426a-9320-2782db24aa14", "thingType", "RaspberryPi")
+
+                        MT.addEdge("hasGateway", gw1)
+
+                        def asset1 = graph.addVertex(T.label, "asset", "thingId", "61867f15-1bff-4cc2-95e7-01a903c112fd", "thingType", "BULK_CONTAINER")
+
+                        MT.addEdge("hasAsset", asset1)
+
+                        def asset1_gw1 = gw1.addEdge("connected_asset", asset1)
+                        graph.tx().commit()
+                    }
+                }
+            } catch (Throwable th) {
+                // just in case because Groovy loves eating exceptions
+                th.printStackTrace()
+            }
+        }
+] as LifeCycleHook]
+
+// define the default TraversalSource to bind queries to - this one will be named "g".
+globals << [g: graph.traversal()]
+
+ 
